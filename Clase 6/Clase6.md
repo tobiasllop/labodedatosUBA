@@ -1,6 +1,7 @@
 ## Clase 6 Laboratorio de datos
 #### Actividad mapeo de DER
 ![imagen del der](../Clase%206/der.jpg)
+
 Las variables en **negrita** son las claves de las entidades y relaciones.
 ##### Entidades Fuertes
 * Producto(**Codigo**, Descripcion, Tamaño)
