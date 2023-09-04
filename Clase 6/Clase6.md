@@ -2,7 +2,9 @@
 #### Actividad mapeo de DER
 ![imagen del der](../Clase%206/der.jpg)
 
+
 Las variables en **negrita** son las claves de las entidades y relaciones.
+
 ##### Entidades Fuertes
 * Producto(**Codigo**, Descripcion, Tamaño)
 * Cliente(Nombre, Apellido, **CUIL**, Email, Codigo Postal, Fecha Nacimiento)
