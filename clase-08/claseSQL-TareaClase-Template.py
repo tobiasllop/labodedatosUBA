@@ -193,9 +193,10 @@ def main():
     imprimirEjercicio(consigna, [vuelo, aeropuerto, pasajero, reserva], consultaSQL, sql^consultaSQL)    
 
     
+   
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
      # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
      # #                                                                     # #
     # #    FIN -->              EJERCICIO Nro. 01                             # #
      # #                                                                     # # 
@@ -307,7 +308,10 @@ def main():
     consigna    = """a1.- Listar el producto cartesiano entre las tablas persona y nacionalidades"""
     
     consultaSQL = """
-                   
+                   SELECT DISTINCT *
+                   FROM persona
+                   CROSS JOIN
+                   nacionalidades;
                   """
 
     imprimirEjercicio(consigna, [persona, nacionalidades], consultaSQL, sql^consultaSQL)
@@ -333,7 +337,10 @@ def main():
     consigna    = """b1.- Vincular las tablas persona y nacionalidades a través de un INNER JOIN"""
     
     consultaSQL = """
-                   
+                   SELECT * 
+                   FROM persona
+                   INNER JOIN nacionalidades
+                   ON Nacionalidad=IDN;
                   """
 
     imprimirEjercicio(consigna, [persona, nacionalidades], consultaSQL, sql^consultaSQL)
@@ -353,7 +360,10 @@ def main():
     consigna    = """c.- Vincular las tablas persona y nacionalidades a través de un LEFT OUTER JOIN"""
     
     consultaSQL = """
-                   
+                   SELECT DISTINCT * 
+                   FROM persona
+                   LEFT OUTER JOIN nacionalidades
+                   ON NACIONALIDAD=IDN;
                   """
 
     imprimirEjercicio(consigna, [persona, nacionalidades], consultaSQL, sql^consultaSQL)
@@ -366,189 +376,13 @@ def main():
     consigna    = """a.- Vincular las tablas Se_inscribe_en y Materia. Mostrar sólo LU y Nombre de materia"""
     
     consultaSQL = """
-                   
+                   SELECT DISTINCT LU, Nombre
+                   FROM se_inscribe_en
+                   INNER JOIN materia
+                   ON se_inscribe_en.codigo_materia=materia.codigo_materia
                   """
 
-    imprimirEjercicio(consigna, [# =============================================================================
-# FUNCIONES PARA LA GENERACIÓN DE DATAFRAMES 
-# =============================================================================
-def get_empleado():
-    # Genera el dataframe "empleado" que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. DNI
-        # 2. Nombre
-        # 3. Sexo
-        # 4. Salaro
-        
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    empleado = pd.DataFrame(columns = ['DNI', 'Nombre', 'Sexo', 'Salario'])
-    # ... Agregamos cada una de las filas al dataFrame
-    empleado = pd.concat([empleado,pd.DataFrame([
-        {'DNI' : 20222333, 'Nombre' : 'Diego' , 'Sexo' : 'M', 'Salario' : 20000.0},
-        {'DNI' : 33456234, 'Nombre' : 'Laura' , 'Sexo' : 'F', 'Salario' : 25000.0},
-        {'DNI' : 45432345, 'Nombre' : 'Marina', 'Sexo' : 'F', 'Salario' : 10000.0}
-                                                ])
-                        ])
-    return empleado
-
-
-def get_alumnosBD():
-    # Genera el dataframe "alumnosBD" que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. ID
-        # 2. Nombre
-        
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    alumnosBD = pd.DataFrame(columns = ['ID', 'Nombre'])
-    # ... Agregamos cada una de las filas al dataFrame
-    alumnosBD = pd.concat([alumnosBD,pd.DataFrame([
-        {'ID' : 1, 'Nombre' : 'Diego' },
-        {'ID' : 2, 'Nombre' : 'Laura' },
-        {'ID' : 3, 'Nombre' : 'Marina'}
-                                                    ])
-                        ])
-    return alumnosBD
-
-
-def get_alumnosTLeng():
-    # Genera el dataframe alumnosTLeng que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. ID
-        # 2. Nombre
-        
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    alumnosTLeng = pd.DataFrame(columns = ['ID', 'Nombre'])
-    # ... Agregamos cada una de las filas al dataFrame
-    alumnosTLeng = pd.concat([alumnosTLeng,pd.DataFrame([
-        {'ID' : 2, 'Nombre' : 'Laura'    },
-        {'ID' : 4, 'Nombre' : 'Alejandro'}
-                                                        ])
-                        ])
-    return alumnosTLeng
-
-
-def get_persona_ejemploCrossJoin():
-    # Genera el dataframe "persona" que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. Nombre
-        # 2. Nacionalidad
-        
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    persona = pd.DataFrame(columns = ['Nombre', 'Nacionalidad'])
-    # ... Agregamos cada una de las filas al dataFrame
-    persona = pd.concat([persona,pd.DataFrame([
-        {'Nombre' : 'Diego'   , 'Nacionalidad' : 'AR'    },
-        {'Nombre' : 'Laura'   , 'Nacionalidad' : 'BR'    },
-        {'Nombre' : 'Marina'  , 'Nacionalidad' : 'AR'    }
-                                              ])
-                        ])
-    return persona
-
-
-def get_persona_ejemplosJoin():
-    # Genera el dataframe "persona" que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. Nombre
-        # 2. Nacionalidad
-        
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    persona = pd.DataFrame(columns = ['Nombre', 'Nacionalidad'])
-    # ... Agregamos cada una de las filas al dataFrame
-    persona = pd.concat([persona,pd.DataFrame([
-        {'Nombre' : 'Diego'   , 'Nacionalidad' : 'BR'    },
-        {'Nombre' : 'Laura'   , 'Nacionalidad' : None    },
-        {'Nombre' : 'Marina'  , 'Nacionalidad' : 'AR'    },
-        {'Nombre' : 'Santiago', 'Nacionalidad' : 'UY'    }
-                                              ])
-                        ])
-    return persona
-
-
-def get_se_inscribe_en_ejemploMismosNombres():
-    # Genera el dataframe "se_inscribe_en" que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. LU
-        # 2. Codigo_materia
-        
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    se_inscribe_en = pd.DataFrame(columns = ['LU','Codigo_materia'])
-    # ... Agregamos cada una de las filas al dataFrame
-    se_inscribe_en = pd.concat([se_inscribe_en,pd.DataFrame([
-        {'LU':'123/09','Codigo_materia': 1},
-        {'LU':' 22/10','Codigo_materia': 1},
-        {'LU':' 22/10','Codigo_materia': 2},
-        {'LU':'344/09','Codigo_materia': 1}
-                                              ])
-                        ])
-    return se_inscribe_en
-
-def get_materia_ejemploMismosNombres():
-    # Genera el dataframe "materia" que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. Codigo_materia
-        # 2. Nombre
-        
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    materia = pd.DataFrame(columns = ['Codigo_materia','Nombre'])
-    # ... Agregamos cada una de las filas al dataFrame
-    materia = pd.concat([materia,pd.DataFrame([
-        {'Codigo_materia': 1, 'Nombre':'Laboratorio de Datos'   },
-        {'Codigo_materia': 2, 'Nombre':'Análisis II'   },
-        {'Codigo_materia': 3, 'Nombre':'Probabilidad'   }
-                                              ])
-                        ])
-    return materia
-
-
-def get_nacionalidades():
-    # Genera el dataframe "nacionalidades" que contiene las siguientes columnas 
-    # (en el orden mencionado):
-        # 1. IDN (Id Nacionalidad)
-        # 2. Detalle
-    
-    # ... Creamos el dataframe vacío (sólo con los nombres de sus columnas)
-    nacionalidades = pd.DataFrame(columns = ['IDN', 'Detalle'])
-    # ... Agregamos cada una de las filas al dataFrame
-    nacionalidades = pd.concat([nacionalidades,pd.DataFrame([
-        {'IDN' : 'AR', 'Detalle' : 'Agentina'},
-        {'IDN' : 'BR', 'Detalle' : 'Brasilera'},
-        {'IDN' : 'CH', 'Detalle' : 'Chilena'}
-                                                          ])
-                        ])
-    return nacionalidades
-
-# =============================================================================
-# DEFINICION DE FUNCIÓN DE IMPRESIÓN EN PANTALLA
-# =============================================================================
-# Imprime en pantalla en un formato ordenado:
-    # 1. Consigna
-    # 2. Cada dataframe de la lista de dataframes de entrada
-    # 3. Query
-    # 4. Dataframe de salida
-def imprimirEjercicio(consigna, listaDeDataframesDeEntrada, consultaSQL, dataframeResultadoDeConsultaSQL):
-    
-    print("# -----------------------------------------------------------------------------")
-    print("# Consigna: ", consigna)
-    print("# -----------------------------------------------------------------------------")
-    print()
-    for i in range(len(listaDeDataframesDeEntrada)):
-        print("# Entrada 0",i,sep='')
-        print("# -----------")
-        print(listaDeDataframesDeEntrada[i])
-        print()
-    print("# SQL:")
-    print("# ----")
-    print(consultaSQL)
-    print()
-    print("# Salida:")
-    print("# -------")
-    print(dataframeResultadoDeConsultaSQL)
-    print()
-    print("# -----------------------------------------------------------------------------")
-    print("# -----------------------------------------------------------------------------")
-    print()
-    print()
-persona, nacionalidades], consultaSQL, sql^consultaSQL)
+    imprimirEjercicio(consigna, [persona, nacionalidades], consultaSQL, sql^consultaSQL)
     
     
     
@@ -573,7 +407,9 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = "Ejercicio 03.1.- Devolver el nombre de la ciudad de partida del vuelo número 165"
 
     consultaSQL = """
-                    
+                    SELECT A.ciudad FROM aeropuerto AS A
+                    INNER JOIN vuelo as V ON V.origen = A.codigo
+                    WHERE V.numero=165;
                   """
 
     imprimirEjercicio(consigna, [vuelo, aeropuerto, pasajero, reserva], consultaSQL, sql^consultaSQL)    
@@ -582,7 +418,11 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = "Ejercicio 03.2.- Retornar el nombre de las personas que realizaron reservas a un valor menor a $200"
 
     consultaSQL = """
-                    
+                    SELECT DISTINCT nombre
+                    FROM reserva
+                    INNER JOIN pasajero
+                    ON reserva.DNI = pasajero.DNI
+                    WHERE precio < 200
                   """
 
     imprimirEjercicio(consigna, [vuelo, aeropuerto, pasajero, reserva], consultaSQL, sql^consultaSQL)    
@@ -591,9 +431,21 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = "Ejercicio 03.3.- Obtener Nombre, Fecha y Destino del Viaje de todos los pasajeros que vuelan desde Madrid"
 
 
-    consultaSQL = """
-                    
+    consulta1 = """
+                  SELECT *
+                  FROM reserva 
+                  INNER JOIN pasajero
+                  ON reserva.dni = pasajero.dni;
                   """
+    tabla1=sql^consulta1
+    
+    consultaSQL = """
+                    SELECT Nombre, Fecha, Destino
+                    FROM vuelo
+                    INNER JOIN tabla1
+                    ON vuelo.numero = tabla1.NroVuelo
+                    WHERE vuelo.origen='MAD';
+                """
     imprimirEjercicio(consigna, [vuelo, aeropuerto, pasajero, reserva], consultaSQL, sql^consultaSQL)    
 
 
@@ -615,7 +467,9 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """a.- Vincular las tablas Reserva, Pasajero y Vuelo. Mostrar sólo Fecha de reserva, hora de salida del vuelo y nombre de pasajero."""
     
     consultaSQL = """
-                   
+                   SELECT DISTINCT r.Fecha, v.Salida, p.Nombre
+                   FROM reserva AS r, pasajero AS  p, vuelo AS v
+                   WHERE r.DNI = p.DNI AND r.NroVuelo = v.Numero
                   """
 
     imprimirEjercicio(consigna, [reserva, pasajero, vuelo], consultaSQL, sql^consultaSQL)
@@ -628,7 +482,10 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """a.- Vincular (JOIN)  EmpleadoRol y RolProyecto para obtener la tabla original EmpleadoRolProyecto"""
     
     consultaSQL = """
-                   
+                   SELECT DISTINCT er.empleado, er.rol, rolProyecto.proyecto
+                   FROM empleadoRol AS er
+                   INNER JOIN rolProyecto
+                   ON er.rol=rolProyecto.rol;
                   """
 
     imprimirEjercicio(consigna, [empleadoRol, rolProyecto], consultaSQL, sql^consultaSQL)
@@ -640,7 +497,8 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """a.- Usando sólo SELECT contar cuántos exámenes fueron rendidos (en total)"""
     
     consultaSQL = """
-                    
+                    SELECT count(*) AS CantidadDEExamenes
+                    FROM examen
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -650,7 +508,9 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """b1.- Usando sólo SELECT contar cuántos exámenes fueron rendidos en cada Instancia"""
     
     consultaSQL = """
-                    
+                    SELECT instancia, count(*) AS Asistieron
+                    FROM examen
+                    GROUP BY instancia;
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -660,7 +520,10 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """b2.- Usando sólo SELECT contar cuántos exámenes fueron rendidos en cada Instancia (ordenado por instancia)"""
     
     consultaSQL = """
-
+               SELECT instancia, count(*) AS Asistieron
+                    FROM examen
+                    GROUP BY instancia
+                    ORDER BY instancia ASC;
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -670,7 +533,11 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """b3.- Ídem ejercicio anterior, pero mostrar sólo las instancias a las que asistieron menos de 4 Estudiantes"""
     
     consultaSQL = """
-
+                    SELECT instancia, count(*) AS Asistieron
+                    FROM examen
+                    GROUP BY instancia
+                    HAVING asistieron < 4
+                    ORDER BY instancia ASC;
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -680,7 +547,11 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """c.- Mostrar el promedio de edad de los estudiantes en cada instancia de examen"""
     
     consultaSQL = """
-                     
+                    SELECT instancia, AVG(Edad) as PromedioEdad
+                    FROM examen
+                    GROUP BY instancia
+                    ORDER BY instancia ASC
+                    
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -693,17 +564,33 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """a1.- Mostrar cuál fue el promedio de notas en cada instancia de examen, sólo para instancias de parcial."""
     
     consultaSQL = """
-                     
-                  """
+                    SELECT instancia, AVG(Edad) as PromedioEdad
+                    FROM examen
+                    GROUP BY instancia
+                    HAVING instancia='Parcial-01' or instancia='Parcial-02'
+                    ORDER BY instancia ASC
+                    
+                 """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
+
+
+
+    print("# =============================================================================")
+    print("# Ejercicios SQL - LIKE")
+    print("# =============================================================================")
 
 
     # -----------
     consigna    = """a2.- Mostrar cuál fue el promedio de notas en cada instancia de examen, sólo para instancias de parcial. Esta vez usando LIKE."""
     
     consultaSQL = """
-    
+                    SELECT instancia, AVG(Edad) as PromedioEdad
+                    FROM examen
+                    GROUP BY instancia
+                    HAVING instancia LIKE 'Parcial%' 
+                    ORDER BY instancia ASC
+                    
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -716,7 +603,16 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """a1.- Listar a cada alumno que rindió el Parcial-01 y decir si aprobó o no (se aprueba con nota >=4)."""
     
     consultaSQL = """
-                    
+                 SELECT Nombre,
+                     Nota,
+                     CASE WHEN Nota >= 4
+                         THEN 'APROBÓ'
+                         ELSE 'NO APROBÓ'
+                     END AS Estado,
+                     Nota >= 4 AS chequeoDeNuevo
+                     FROM examen
+                     WHERE Instancia='Parcial-01'
+                     ORDER BY NOMBRE
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -726,7 +622,15 @@ persona, nacionalidades], consultaSQL, sql^consultaSQL)
     consigna    = """a2.- Modificar la consulta anterior para que informe cuántos estudiantes aprobaron/reprobaron en cada instancia."""
     
     consultaSQL = """
-                    
+                 SELECT instancia,
+                    CASE WHEN Nota >= 4
+                         THEN 'APROBÓ'
+                         ELSE 'NO APROBÓ'
+                     END AS Estado,
+                     count(*) AS Cantidad
+                     FROM examen
+                     GROUP BY instancia, Estado
+                     ORDER BY instancia, Estado
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
