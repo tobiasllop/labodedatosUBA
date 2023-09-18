@@ -17,7 +17,7 @@ def main():
     print("# Creamos/Importamos los datasets que vamos a utilizar en este programa")
     print("# =============================================================================")
 
-    carpeta = "~/Downloads/clase-08/"
+    carpeta = "~/Descargas/clase-08/"
     
     # Ejercicios AR-PROJECT, SELECT, RENAME
     empleado       = get_empleado()
@@ -30,9 +30,6 @@ def main():
     # Ejercicios ¿Mismos Nombres?
     se_inscribe_en=get_se_inscribe_en_ejemploMismosNombres()
     materia       =get_materia_ejemploMismosNombres()
-    # Ejercicio JOIN múltiples tablas                   SELECT DISTINCT *
-                   FROM empleado
-                   WHERE Sexo = 'F'
     vuelo      = pd.read_csv("vuelo.csv")    
     aeropuerto = pd.read_csv("aeropuerto.csv")    
     pasajero   = pd.read_csv("pasajero.csv")    
@@ -642,20 +639,50 @@ def main():
 
     consigna    = """a.- Listar los alumnos que en cada instancia obtuvieron una nota mayor al promedio de dicha instancia"""
     
+    promedios = sql^ """
+                        
+    SELECT instancia, AVG(Nota) AS Valor
+    FROM examen
+    GROUP BY instancia
+                    """
+    examenConPromedio = sql^  """
+    SELECT e.*, p.Valor
+            FROM examen as e
+            INNER JOIN promedios AS p
+            ON e.instancia=p.instancia
+
+    """
     consultaSQL = """
-
+                        SELECT NOMBRE, Instancia, Nota
+                        From examenConPromedio
+                        WHERE Nota >= Valor                            
                   """
-
-
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
+
+
+    consultaSQL2 = """
+                    SELECT e1.Nombre, e1.Instancia, e1.Nota
+                    FROM examen AS e1
+                    WHERE e1.Nota >(
+                        SELECT AVG(e2.nota)
+                        FROM examen AS e2
+                        WHERE e2.Instancia = e1.Instancia)
+                    ORDER BY Instancia ASC, Nota DESC;
+            """
 
 
     # -----------
     consigna    = """b.- Listar los alumnos que en cada instancia obtuvieron la mayor nota de dicha instancia"""
     
     consultaSQL = """
-
-                  """
+                    SELECT e1.Nombre, e1.Instancia, e1.Nota
+                    FROM examen AS e1
+                    WHERE e1.Nota = (
+                        SELECT MAX(e2.nota)
+                        FROM examen AS e2
+                        WHERE e2.Instancia = e1.Instancia)
+                    ORDER BY Instancia ASC, Nota DESC;
+            """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
 
@@ -664,8 +691,15 @@ def main():
     consigna    = """c.- Listar el nombre, instancia y nota sólo de los estudiantes que no rindieron ningún Recuperatorio"""
     
     consultaSQL = """
-
-                  """
+                        SELECT e1.Nombre, e1.Instancia, e1.Nota 
+                        FROM examen as e1
+                        WHERE NOT EXISTS (
+                            SELECT *
+                            FROM examen AS e2
+                            WHERE e2.Nombre = e1.Nombre AND
+                                e2.Instancia LIKE 'Recuperatorio%')
+                       ORDER BY e1.Instancia ASC, e1.Nombre ASC;
+                    """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
 
@@ -679,7 +713,9 @@ def main():
     umbralNota = 7
     
     consultaSQL = """
-
+                        SELECT e1.Nombre, e1.Instancia, e1.Nota 
+                        FROM examen as e1
+                        WHERE Nota > $umbralNota;
                   """
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
@@ -692,7 +728,9 @@ def main():
     consigna    = """a.- Listar todas las tuplas de Examen03 cuyas Notas son menores a 9"""
     
     consultaSQL = """
-
+                    SELECT * 
+                    FROM examen03 as e3
+                    WHERE Nota < 9;
                   """
 
     imprimirEjercicio(consigna, [examen03], consultaSQL, sql^consultaSQL)
@@ -701,7 +739,9 @@ def main():
     consigna    = """b.- Listar todas las tuplas de Examen03 cuyas Notas son mayores o iguales a 9"""
     
     consultaSQL = """
-
+                    SELECT * 
+                    FROM examen03 as e3
+                    WHERE Nota >= 9;
                   """
 
 
@@ -712,7 +752,11 @@ def main():
     consigna    = """c.- Listar el UNION de todas las tuplas de Examen03 cuyas Notas son menores a 9 y las que son mayores o iguales a 9"""
     
     consultaSQL = """
-
+                  SELECT * 
+                  FROM examen03 as e1
+                  WHERE Nota < 9
+                  UNION (SELECT * FROM examen03 as e2
+                         WHERE Nota >= 9)
                   """
 
 
@@ -723,7 +767,9 @@ def main():
     consigna    = """d1.- Obtener el promedio de notas"""
     
     consultaSQL = """
-
+                  SELECT AVG(Nota) as promedio 
+                  FROM examen03 as e3
+                  
                   """
 
 
@@ -734,7 +780,8 @@ def main():
     consigna    = """d2.- Obtener el promedio de notas (tomando a NULL==0)"""
     
     consultaSQL = """
-
+                  SELECT AVG(CASE WHEN Nota is Null THEN 0 ELSE Nota END) as promedio 
+                  FROM examen03 as e3
                   """
 
 
@@ -748,13 +795,18 @@ def main():
     
     # ... Paso 1: Obtenemos los datos de los estudiantes
     consultaSQL = """
-
+                    SELECT DISTINCT Nombre, Sexo, Edad
+                    FROM examen 
                   """
 
     datosEstudiantes = sql^ consultaSQL
     
     # ... Paso 2: Agregamos las notas del Parcial-01
     consultaSQL = """
+                     SELECT e.*, p.Nota AS Parcial_01
+                     FROM datosEstudiantes AS e
+                     LEFT OUTER JOIN examen as p
+                     ON e.Nombre=p.Nombre AND instancia='Parcial-01'
 
                   """
 
@@ -762,21 +814,30 @@ def main():
 
     # ... Paso 3: Agregamos las notas del Parcial-02
     consultaSQL = """
-                     
+                     SELECT e.*, p.Nota AS Parcial_02
+                     FROM datosHastaParcial01 AS e
+                     LEFT OUTER JOIN examen as p
+                     ON e.Nombre=p.Nombre AND instancia='Parcial-02'
                   """
 
     datosHastaParcial02 = sql^ consultaSQL
 
     # ... Paso 4: Agregamos las notas del Recuperatorio-01
     consultaSQL = """
-                     
+                     SELECT e.*, p.Nota AS Recuperatorio_01
+                     FROM datosHastaParcial02 AS e
+                     LEFT OUTER JOIN examen as p
+                     ON e.Nombre=p.Nombre AND instancia='Recuperatorio-01'
                   """
 
     datosHastaRecuperatorio01 = sql^ consultaSQL
 
     # ... Paso 5: Agregamos las notas del Recuperatorio-02
     consultaSQL = """
-                     
+                     SELECT e.*, p.Nota AS Recuperatorio_02
+                     FROM datosHastaRecuperatorio01 AS e
+                     LEFT OUTER JOIN examen as p
+                     ON e.Nombre=p.Nombre AND instancia='Recuperatorio-02'
                   """
 
     datosHastaRecuperatorio02 = sql^ consultaSQL
@@ -785,12 +846,21 @@ def main():
 
     imprimirEjercicio(consigna, [examen], consultaSQL, sql^consultaSQL)
 
-
     # -----------
     consigna    = """b.- Agregar al ejercicio anterior la columna Estado, que informa si el alumno aprobó la cursada (APROBÓ/NO APROBÓ). Se aprueba con 4."""
     
     consultaSQL = """
-
+                   SELECT d.*,
+                   CASE WHEN ( (Parcial_01>=4 OR Recuperatorio_01>=4)
+                   AND
+                   (Parcial_02 >= 4 OR Recuperatorio_02 >= 4)
+                   )
+                   THEN
+                          'APROBO'
+                   ELSE
+                           'NO APOBO'
+                   END AS Estado
+                   FROM desafio_01 as d
                   """
 
     desafio_02 = sql^ consultaSQL
@@ -801,7 +871,21 @@ def main():
     consigna    = """c.- Generar la tabla Examen a partir de la tabla obtenida en el desafío anterior."""
     
     consultaSQL = """
-
+                        SELECT Nombre, Sexo, Edad, 'Parcial-01' AS Instancia, Parcial_01 AS Nota
+                        FROM desafio_02
+                        WHERE Parcial_01 IS NOT NULL
+                        UNION
+                        SELECT Nombre, Sexo, Edad, 'Parcial-02' AS Instancia, Parcial_02 AS Nota
+                        FROM desafio_02
+                        WHERE Parcial_02 IS NOT NULL
+                        UNION
+                        SELECT Nombre, Sexo, Edad, 'Recuperatorio-01' AS Instancia, Recuperatorio_01 AS Nota
+                        FROM desafio_02
+                        WHERE Recuperatorio_01 IS NOT NULL
+                        UNION
+                        SELECT Nombre, Sexo, Edad, 'Recuperaorio-02' AS Instancia, Recuperatorio_02 AS Nota
+                        FROM desafio_02
+                        WHERE Recuperatorio_02 IS NOT NULL
                   """
 
     desafio_03 = sql^ consultaSQL
@@ -815,7 +899,8 @@ def main():
     consigna    = """a.- Consigna: En la descripción de los roles de los empleados reemplazar las ñ por ni"""
     
     consultaSQL = """
-
+                    SELECT empleado, REPLACE(rol, 'ñ', 'ni') as rol
+                    FROM empleadoRol
                   """
 
     imprimirEjercicio(consigna, [empleadoRol], consultaSQL, sql^consultaSQL)
@@ -827,6 +912,9 @@ def main():
     consigna    = """a.- Consigna: Transformar todos los caracteres de las descripciones de los roles a mayúscula"""
     
     consultaSQL = """
+                    SELECT empleado, UPPER(rol) as rol
+                    FROM empleadoRol
+    
 
                   """
 
@@ -836,6 +924,9 @@ def main():
     consigna    = """b.- Consigna: Transformar todos los caracteres de las descripciones de los roles a minúscula"""
     
     consultaSQL = """
+                  SELECT empleado, LOWER(rol) as rol
+                  FROM empleadoRol
+    
 
                   """
 
